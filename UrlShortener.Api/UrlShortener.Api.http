@@ -1,0 +1,37 @@
+@UrlShortener.Api_HostAddress = http://localhost:5055
+@Reviewer = reviewer@example.com
+@ApprovalToken = {{$dotenv ORCHESTRATION_APPROVAL_TOKEN}}
+
+GET {{UrlShortener.Api_HostAddress}}/health
+Accept: application/json
+
+###
+
+POST {{UrlShortener.Api_HostAddress}}/api/urls
+Content-Type: application/json
+
+{"url":"https://example.com/article","customCode":"article-demo"}
+
+###
+
+GET {{UrlShortener.Api_HostAddress}}/r/article-demo
+
+###
+
+GET {{UrlShortener.Api_HostAddress}}/api/urls/article-demo/analytics
+
+###
+
+POST {{UrlShortener.Api_HostAddress}}/api/orchestration/runs
+Content-Type: application/json
+
+{"scenario":"greenfield"}
+
+###
+
+POST {{UrlShortener.Api_HostAddress}}/api/orchestration/runs/{{runId}}/approvals
+X-Approval-Token: {{ApprovalToken}}
+X-Reviewer: {{Reviewer}}
+Content-Type: application/json
+
+{"stageId":"implementation","rationale":"Reviewed proposal and policy risks."}
